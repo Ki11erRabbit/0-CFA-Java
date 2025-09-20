@@ -18,7 +18,7 @@ public class Parser {
         if (tokens.get(position).getType() == Token.Type.LAMBDA) {
             ExpressionNode lambda = parseLambda();
             if (position < tokens.size()) {
-                ExpressionNode arg = parseApp();
+                ExpressionNode arg = parseLambda();
 
                 return new Application(lambda, arg);
             }
@@ -26,10 +26,17 @@ public class Parser {
         } else if (tokens.get(position).getType() == Token.Type.LPAREN) {
             position++;
             ExpressionNode expr = parseApp();
-            if (tokens.get(position).getType() == Token.Type.RPAREN) {
-                return new Paren(expr);
+            if (tokens.get(position).getType() != Token.Type.RPAREN) {
+                throw new RuntimeException("Expected closing paren");
             }
-            throw new RuntimeException("Expected closing paren");
+            position++;
+            expr = new Paren(expr);
+            if (position < tokens.size()) {
+                ExpressionNode arg = parseLambda();
+
+                return new Application(expr, arg);
+            }
+            return expr;
         } else {
             return parseLambda();
         }

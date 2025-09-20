@@ -128,10 +128,13 @@ public class Cfa {
             System.out.println("Pass " + pass + ": ");
             displayState();
             noChanges = true;
-            for (Fact fact : facts) {
+            for (Fact fact : new HashSet<>(facts)) {
                 noChanges = noChanges && !applyFact(fact);
             }
+            pass++;
         } while (!noChanges);
+        System.out.println("Final Result:");
+        displayState();
 
         boolean allFilled = true;
         for (Set<ExpressionNode> set : sets) {
@@ -141,7 +144,11 @@ public class Cfa {
                 return;
             }
         }
-        System.out.println("There is a solution");
+        if (sets[0].size() > 1) {
+            System.out.println("There is a solution");
+        } else {
+            System.out.println("There wasn't a solution");
+        }
     }
 
     private boolean applyFact(Fact fact) {
@@ -178,8 +185,15 @@ public class Cfa {
                         Value valueSrc = new ValueSource(app.getValue().getIndex());
                         Substitution newSub = new SubstitutionSimple(pointToInt.get(lambda.getParameter()));
                         Fact newFact = new Fact(valueSrc, newSub);
+
                         if (!facts.contains(newFact)) {
                             facts.add(newFact);
+                            anyUpdates = true;
+                            continue;
+                        }
+                        ExpressionNode resultingExpr = programPoints.get(app.getValue().getIndex()).getNode();
+                        if (!sets[app.getResult().getIndex()].contains(resultingExpr)) {
+                            sets[app.getResult().getIndex()].add(resultingExpr);
                             anyUpdates = true;
                         }
                     }

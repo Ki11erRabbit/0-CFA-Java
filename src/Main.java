@@ -14,7 +14,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        System.out.println("Enter a lambda calculus expression");
+        System.out.println("Enter a lambda calculus expression (ex: `\\x.x 3`, `(\\x. x \\y. y) 3`)");
         String line = reader.readLine();
 
         Lexer lexer = new Lexer(line);
