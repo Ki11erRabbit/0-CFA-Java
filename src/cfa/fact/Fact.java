@@ -4,7 +4,13 @@ import java.util.Objects;
 
 public class Fact {
 
+    /*
+    The Right hand side of a fact
+     */
     private Value possibleValues;
+    /*
+    The Left hand side of a fact
+     */
     private Substitution substitution;
 
     public Fact(Value possibleValues, Substitution substitution) {

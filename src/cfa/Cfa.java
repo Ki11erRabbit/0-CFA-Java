@@ -41,7 +41,6 @@ public class Cfa {
             loadPoints(app.getFunction());
             loadPoints(app.getArgument());
         } else if (tree instanceof ast.Paren paren) {
-            addPoint(tree);
             loadPoints(paren.getExpression());
         } else if (tree instanceof ast.Number) {
             addValue(tree);
@@ -71,7 +70,7 @@ public class Cfa {
             facts.add(fact);
         } else if (node instanceof ast.Paren paren) {
             Substitution sub = new SubstitutionSimple(index);
-            Value set = new ValueSet(node);
+            Value set = new ValueSet(paren.getExpression());
             Fact fact = new Fact(set, sub);
             facts.add(fact);
             initializeFacts(paren.getExpression(), varIndex);
@@ -176,11 +175,19 @@ public class Cfa {
                 if (!sets[index].contains(programPoints.get(srcIndex).getNode())) {
                     anyUpdates = true;
                     sets[index].add(programPoints.get(srcIndex).getNode());
+                } else {
+                    for (ExpressionNode node : new HashSet<>(sets[srcIndex])) {
+                        if (!sets[index].contains(node)) {
+                            anyUpdates = true;
+                            sets[index].add(node);
+                        }
+                    }
                 }
+
             }
         } else if (sub instanceof SubstitutionApply app) {
             if (value instanceof ValueSource src) {
-                for (ExpressionNode node : sets[src.getIndex()]) {
+                for (ExpressionNode node : new HashSet<>(sets[src.getIndex()])) {
                     if (node instanceof ast.Lambda lambda) {
                         Value valueSrc = new ValueSource(app.getValue().getIndex());
                         Substitution newSub = new SubstitutionSimple(pointToInt.get(lambda.getParameter()));
@@ -189,12 +196,16 @@ public class Cfa {
                         if (!facts.contains(newFact)) {
                             facts.add(newFact);
                             anyUpdates = true;
-                            continue;
                         }
-                        ExpressionNode resultingExpr = programPoints.get(app.getValue().getIndex()).getNode();
-                        if (!sets[app.getResult().getIndex()].contains(resultingExpr)) {
-                            sets[app.getResult().getIndex()].add(resultingExpr);
-                            anyUpdates = true;
+                        for (ExpressionNode resultingExpr : new HashSet<>(sets[app.getValue().getIndex()])) {
+                            if (!(sets[app.getResult().getIndex()].contains(resultingExpr))) {
+                                sets[app.getResult().getIndex()].add(resultingExpr);
+                                anyUpdates = true;
+                            }
+                            if (!sets[src.getIndex()].contains(resultingExpr)) {
+                                sets[src.getIndex()].add(resultingExpr);
+                                anyUpdates = true;
+                            }
                         }
                     }
                 }

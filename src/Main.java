@@ -1,6 +1,7 @@
 import ast.ExpressionNode;
 import cfa.Cfa;
 import parser.Lexer;
+import parser.Normalize;
 import parser.Parser;
 import parser.Token;
 
@@ -14,7 +15,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
-        System.out.println("Enter a lambda calculus expression (ex: `\\x.x 3`, `(\\x. x \\y. y) 3`)");
+        System.out.println("Enter a lambda calculus expression (ex: `\\x.x 3`, `(λx. x λy. y) 3`)");
         String line = reader.readLine();
 
         Lexer lexer = new Lexer(line);
@@ -26,6 +27,7 @@ public class Main {
 
         Parser parser = new Parser(tokens);
         ExpressionNode node = parser.parse();
+        node = Normalize.normalize(node);
 
         Cfa cfa = new Cfa();
         cfa.loadPoints(node);
