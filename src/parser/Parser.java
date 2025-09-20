@@ -17,7 +17,7 @@ public class Parser {
     private ExpressionNode parseApp() {
         if (tokens.get(position).getType() == Token.Type.LAMBDA) {
             ExpressionNode lambda = parseLambda();
-            if (position < tokens.size()) {
+            if (position < tokens.size() && tokens.get(position).getType() != Token.Type.RPAREN) {
                 ExpressionNode arg = parseLambda();
 
                 return new Application(lambda, arg);
@@ -50,7 +50,7 @@ public class Parser {
                 throw new RuntimeException("Expected dot in lambda expression");
             }
             position++;
-            ExpressionNode body = parseExpr();
+            ExpressionNode body = parseLambda();
 
             return new Lambda(arg, body);
         } else {
@@ -73,7 +73,7 @@ public class Parser {
                 }
             }
             case LPAREN -> {
-                ExpressionNode expr = parseExpr();
+                ExpressionNode expr = parseApp();
                 Token rparenToken = tokens.get(position);
                 if (rparenToken.getType() != Token.Type.RPAREN) {
                     throw new RuntimeException("Expected ')' after expression");
@@ -91,7 +91,7 @@ public class Parser {
                     yield left;
                 }
             }
-            default -> throw new RuntimeException("Unexpected token: " + token.getValue());
+            default -> throw new RuntimeException("Unexpected token: " + token.getValue() + " at " + position);
         };
     }
 

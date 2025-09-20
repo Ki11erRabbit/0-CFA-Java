@@ -18,7 +18,11 @@ public class Main {
         System.out.println("Enter a lambda calculus expression (ex: `\\x.x 3`, `(λx. x λy. y) 3`)");
         String line = reader.readLine();
 
-        Lexer lexer = new Lexer(line);
+        run(line);
+    }
+
+    public static void run(String expr) {
+        Lexer lexer = new Lexer(expr);
         List<Token> tokens = new ArrayList<>();
         Token token;
         while ((token = lexer.nextToken()) != null) {
@@ -33,6 +37,5 @@ public class Main {
         cfa.loadPoints(node);
         cfa.initializeFacts(node);
         cfa.solve();
-
     }
 }
