@@ -2,11 +2,11 @@ package cfa.fact;
 
 import java.util.Objects;
 
-public class SubstitutionApply implements Substitution {
+public class SubstitutionMapping implements Substitution {
     private SubstitutionSimple value;
     private SubstitutionSimple result;
 
-    public SubstitutionApply(SubstitutionSimple value, SubstitutionSimple result) {
+    public SubstitutionMapping(SubstitutionSimple value, SubstitutionSimple result) {
         this.value = value;
         this.result = result;
     }
@@ -23,7 +23,7 @@ public class SubstitutionApply implements Substitution {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SubstitutionApply that = (SubstitutionApply) o;
+        SubstitutionMapping that = (SubstitutionMapping) o;
         return Objects.equals(value, that.value) && Objects.equals(result, that.result);
     }
 

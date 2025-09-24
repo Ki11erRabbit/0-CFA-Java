@@ -106,7 +106,7 @@ public class Cfa {
             int funIndex = pointToInt.get(fun);
             ExpressionNode arg = app.getArgument();
             int argIndex = pointToInt.get(arg);
-            Substitution application = new SubstitutionApply(new SubstitutionSimple(argIndex), new SubstitutionSimple(index));
+            Substitution application = new SubstitutionMapping(new SubstitutionSimple(argIndex), new SubstitutionSimple(index));
             Value src = new ValueSource(funIndex);
 
             Fact fact = new Fact(src, application);
@@ -185,7 +185,7 @@ public class Cfa {
                 }
 
             }
-        } else if (sub instanceof SubstitutionApply app) {
+        } else if (sub instanceof SubstitutionMapping app) {
             if (value instanceof ValueSource src) {
                 for (ExpressionNode node : new HashSet<>(sets[src.getIndex()])) {
                     if (node instanceof ast.Lambda lambda) {
